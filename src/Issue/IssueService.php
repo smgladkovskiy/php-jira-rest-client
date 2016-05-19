@@ -4,6 +4,7 @@ namespace JiraRestApi\Issue;
 
 use JiraRestApi\JiraException;
 use JiraRestApi\Dumper;
+use JiraRestApi\Project\Project;
 
 class IssueService extends \JiraRestApi\JiraClient
 {
@@ -41,6 +42,30 @@ class IssueService extends \JiraRestApi\JiraClient
 
         return $issue = $this->json_mapper->map(
             json_decode($ret) , new Issue()
+        );
+    }
+
+    /**
+     *  Returns the meta data for creating issues.
+     *
+     * @param array $paramArray Query Parameter key-value Array.
+     *
+     * @return Issue class
+     *
+     * @throws JiraException
+     * @throws \JsonMapper_Exception
+     */
+    public function getCreateMeta($paramArray = ['projectIds', 'projectKeys', 'issuetypeIds', 'issuetypeNames'])
+    {
+        $queryParam = '?' . http_build_query($paramArray);
+
+        $ret = $this->exec($this->uri . "/" . 'createmeta' . $queryParam, null);
+
+        $this->log->addInfo("getCreateMeta Result=\n".$ret);
+
+        Dumper::dump($ret);
+        return $issue = $this->json_mapper->map(
+            json_decode($ret) , new Project()
         );
     }
 

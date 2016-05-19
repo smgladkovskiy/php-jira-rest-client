@@ -160,14 +160,21 @@ class IssueField implements \JsonSerializable
     /**
      * add custom field
      *
-     * @param $data array of custom field
+     * @param $fieldId int custom field id
+     * @param $data custom field data
      */
-    public function addCustomFields($data) {
-        foreach ($data as $key => $value) {
-            if (substr($key, 0, 12) == 'customfield_') {
-                $this->{$key} = $value;
-            }
+    public function addCustomField($fieldId, $data) {
+        $key = 'customfield_' . $fieldId;
+
+        if (is_array($data) || is_object($data)) {
+            $value = json_encode($data);
+        }else {
+            $value = $data;
         }
+        $value = $data;
+        $this->{$key} = $value;
+
+        return $this;
     }
 
     /**
@@ -182,10 +189,14 @@ class IssueField implements \JsonSerializable
         elseif (is_string($keyOrId)) {
             $this->parent['key'] = $keyOrId;
         }
+
+        return $this;
     }
 
     public function setParent(Issue $parent) {
        $this->parent = $parent;
+
+        return $this;
     }
 
     /** @var string */
